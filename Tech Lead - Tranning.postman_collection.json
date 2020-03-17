@@ -1,0 +1,203 @@
+{
+	"info": {
+		"_postman_id": "856c16c1-ab20-444b-a73b-49e9805d9155",
+		"name": "Tech Lead - Tranning",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1 - Incluir Ticket",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d01df41a-81fd-464e-957e-dc91819acf5b",
+						"exec": [
+							"postman.setEnvironmentVariable(\"idTicket\", responseBody);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"day-one\",\n\t\"amount\" : 200.00\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/tickets",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"tickets"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "1a - Lista Tickets",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8081/tickets",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"tickets"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "2 - Incluir Stock",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"ticketId\" : \"{{idTicket}}\",\n\t\"quantity\": 5\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/stocks/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"stocks",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "2a - Lista Stock",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8081/stocks",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"stocks"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "3 - Incluir Order",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{    \n\t\"customerId\": \"e081ad0f-f83e-4f81-b2d7-23655ac04b8a\",    \n\t\"amount\" : 200.00,    \n\t\"items\": [        {            \n\t  \"id\": \"{{idTicket}}\",            \n\t  \"name\": \"day-one\",\n\t  \"amount\" : 200.00,            \n\t  \"quantity\" : 1\n\t}    \n\t  ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/orders",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "3a - Lista Orders",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/orders",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
