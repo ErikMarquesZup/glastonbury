@@ -23,12 +23,14 @@ public class Order {
     @Cascade(CascadeType.ALL)
     private List<OrderItem> items;
 
-    private String status;
+    @ManyToMany
+    @Cascade(CascadeType.ALL)
+    private List<StatusItem> status;
 
     public Order() {
     }
 
-    public Order(String id, String customerId, BigDecimal amount, List<OrderItem> items, String status) {
+    public Order(String id, String customerId, BigDecimal amount, List<OrderItem> items, List<StatusItem> status) {
         this.id = id;
         this.customerId = customerId;
         this.amount = amount;
@@ -68,12 +70,11 @@ public class Order {
         this.customerId = customerId;
     }
 
-    public String getStatus() {
+    public List<StatusItem> getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(List<StatusItem> status) {
         this.status = status;
     }
-
 }

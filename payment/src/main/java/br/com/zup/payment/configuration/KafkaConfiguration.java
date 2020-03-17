@@ -1,8 +1,7 @@
-package br.com.zup.inventory.configuration;
+package br.com.zup.payment.configuration;
 
-import br.com.zup.inventory.event.OrderCreatedEvent;
-import br.com.zup.inventory.event.StatusOrderEvent;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import br.com.zup.payment.event.OrderCreatedEvent;
+import br.com.zup.payment.event.StatusOrderEvent;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -25,28 +24,25 @@ import java.util.Map;
 public class KafkaConfiguration {
 
     private String bootstrap;
-    private ObjectMapper objectMapper;
 
-    public KafkaConfiguration(@Value(value = "${spring.kafka.bootstrap-servers}") String bootstrap,
-                              ObjectMapper objectMapper) {
+    public KafkaConfiguration(@Value(value = "${spring.kafka.bootstrap-servers}") String bootstrap) {
         this.bootstrap = bootstrap;
-        this.objectMapper = objectMapper;
     }
 
     @Bean
     public NewTopic stockSuccess() {
-        return new NewTopic("stock-success-orders", 1, (short) 1);
+        return new NewTopic("payment-success-orders", 1, (short) 1);
     }
 
     @Bean
     public NewTopic stockFailure() {
-        return new NewTopic("stock-failure-orders", 1, (short) 1);
+        return new NewTopic("payment-failure-orders", 1, (short) 1);
     }
 
     @Bean
     public ConsumerFactory<String, String> messageConsumerFactory() {
         Map<String, Object> props = new HashMap<>();
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, "inventory-group-id");
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, "payment-group-id");
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrap);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
@@ -74,7 +70,7 @@ public class KafkaConfiguration {
     }
 
     @Bean
-    public KafkaTemplate<String, OrderCreatedEvent> messageOrder() {
+    public KafkaTemplate<String, OrderCreatedEvent> messagePayment() {
         return new KafkaTemplate<String, OrderCreatedEvent>(messageProducerFactory());
     }
 

@@ -1,6 +1,7 @@
 package br.com.zup.order.configuration;
 
 import br.com.zup.order.event.OrderCreatedEvent;
+import br.com.zup.order.event.StatusOrderEvent;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -48,12 +49,17 @@ public class KafkaConfiguration {
     }
 
     @Bean
-    public KafkaTemplate<String, OrderCreatedEvent> messageKafkaTemplate() {
+    public KafkaTemplate<String, OrderCreatedEvent> messageOrder() {
         return new KafkaTemplate<String, OrderCreatedEvent>(messageProducerFactory());
     }
 
     @Bean
-    public ConsumerFactory<String, String> consumerFactory() {
+    public KafkaTemplate<String, StatusOrderEvent> messageStatus() {
+        return new KafkaTemplate<String, StatusOrderEvent>(messageProducerFactory());
+    }
+
+    @Bean
+    public ConsumerFactory<String, String> messageConsumerFactory() {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "order-group-id");
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrap);
@@ -66,7 +72,7 @@ public class KafkaConfiguration {
     public ConcurrentKafkaListenerContainerFactory<String, String>
     kafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory());
+        factory.setConsumerFactory(messageConsumerFactory());
         return factory;
     }
 }

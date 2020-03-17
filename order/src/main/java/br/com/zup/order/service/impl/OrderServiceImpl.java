@@ -2,16 +2,20 @@ package br.com.zup.order.service.impl;
 
 import br.com.zup.order.controller.request.CreateOrderRequest;
 import br.com.zup.order.controller.response.OrderResponse;
+import br.com.zup.order.entity.Order;
+import br.com.zup.order.entity.StatusItem;
 import br.com.zup.order.event.OrderCreatedEvent;
+import br.com.zup.order.event.OrderCreatedItemEvent;
+import br.com.zup.order.event.OrderCreatedStatusEvent;
 import br.com.zup.order.repository.OrderRepository;
 import br.com.zup.order.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
+import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,27 +32,19 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public String save(CreateOrderRequest request) {
-        String orderId = this.orderRepository.save(request.toEntity()).getId();
+        Order order = this.orderRepository.save(request.toEntity());
 
         OrderCreatedEvent event = new OrderCreatedEvent(
-                orderId,
-                request.getCustomerId(),
-                request.getAmount(),
-                createItemMap(request)
+                order.getId(),
+                order.getCustomerId(),
+                order.getAmount(),
+                order.getItems().stream().map(item -> new OrderCreatedItemEvent(item.getId(), item.getQuantity())).collect(Collectors.toList()),
+                order.getStatus().stream().map(status -> new OrderCreatedStatusEvent(status.getId(), status.getDate(), status.getStatus())).collect(Collectors.toList())
         );
 
         this.template.send("created-orders", event);
 
-        return orderId;
-    }
-
-    private Map<String, Integer> createItemMap(CreateOrderRequest request) {
-        Map<String, Integer> result = new HashMap<>();
-        for (CreateOrderRequest.OrderItemPart item : request.getItems()) {
-            result.put(item.getId(), item.getQuantity());
-        }
-
-        return result;
+        return order.getId();
     }
 
     @Override
@@ -57,5 +53,13 @@ public class OrderServiceImpl implements OrderService {
                 .stream()
                 .map(OrderResponse::fromEntity)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public void updateStatus(String orderId, String status) {
+        Optional<Order> order = orderRepository.findById(orderId);
+        order.get().getStatus().add(new StatusItem(status));
+        orderRepository.save(order.get());
     }
 }

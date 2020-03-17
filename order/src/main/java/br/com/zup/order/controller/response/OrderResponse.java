@@ -16,12 +16,12 @@ public class OrderResponse {
 
     private List<OrderItemResponse> items;
 
-    private String status;
+    private List<StatusItemResponse> status;
 
     public OrderResponse() {
     }
 
-    public OrderResponse(String id, String customerId, BigDecimal amount, List<OrderItemResponse> items, String status) {
+    public OrderResponse(String id, String customerId, BigDecimal amount, List<OrderItemResponse> items, List<StatusItemResponse> status) {
         this.id = id;
         this.customerId = customerId;
         this.amount = amount;
@@ -61,11 +61,11 @@ public class OrderResponse {
         this.items = items;
     }
 
-    public String getStatus() {
+    public List<StatusItemResponse> getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(List<StatusItemResponse> status) {
         this.status = status;
     }
 
@@ -75,7 +75,7 @@ public class OrderResponse {
                 order.getCustomerId(),
                 order.getAmount(),
                 order.getItems().stream().map(OrderItemResponse::fromEntity).collect(Collectors.toList()),
-                order.getStatus()
+                order.getStatus().stream().map(StatusItemResponse::fromEntity).collect(Collectors.toList())
         );
     }
 }
